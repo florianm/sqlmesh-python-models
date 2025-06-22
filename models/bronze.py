@@ -13,7 +13,7 @@ Output: A Pandas dataframe.
 import typing as t
 
 import pandas as pd
-from sqlglot.expressions import to_column
+from sqlglot.expressions import to_column  # , Literal
 from sqlmesh import model
 
 # # ----------------------------------------------------------------------------#
@@ -55,9 +55,10 @@ csv_pk = "id"
     kind="full",
     cron="@hourly",
     signals=[
-        ("always_true", {}),  # Signal 'always_true' is undefined at (this model file).
+        # ("always_true", {},),  # Signal 'always_true' is undefined
         # ("ext_file_exists", {"file_path": Literal.string(csv_fn)}),
-        # ("ext_file_updated", {"execution_dt": "@execution_dt", "file_path": csv_fn}),
+        # ("ext_file_updated",
+        # #{"execution_dt": "@execution_dt", "file_path": csv_fn}),
     ],
     grain=csv_pk,
     columns=make_coldef(csv_fn),
