@@ -1,33 +1,28 @@
 gateways:
-  duckdb:
-    # For more information on configuring the connection to your execution engine, visit:
-    # https://sqlmesh.readthedocs.io/en/stable/reference/configuration/#connections
-    # https://sqlmesh.readthedocs.io/en/stable/integrations/engines/duckdb/#connection-options
-    connection:
-      type: duckdb
-      register_comments: false
-      catalogs:
-        peoplewa:
-          type: postgres
-          path: 'dbname=peoplewa user=peoplewa host=localhost'
-      extensions:
-        - name: iceberg
-    state_connection:
-      type: duckdb
-      database: state.db
-
   postgres:
     connection:
+      # For more information on configuring the connection to your execution engine, visit:
+      # https://sqlmesh.readthedocs.io/en/stable/reference/configuration/#connections
+      # https://sqlmesh.readthedocs.io/en/stable/integrations/engines/postgres/#connection-options
       type: postgres
       database: peoplewa
       user: peoplewa
       password: peoplewa
       host: localhost
       port: 5432
+      # concurrent_tasks: 4
+      # register_comments: True
+      # pre_ping: True
+      # pretty_sql: False
+      # keepalives_idle: 
+      # connect_timeout: 10
+      # role: 
+      # sslmode: 
+      # application_name: 
 
 
-default_gateway: duckdb
+default_gateway: postgres
 
 model_defaults:
-  dialect: duckdb
-  start: 2025-05-10
+  dialect: postgres
+  start: 2025-06-21

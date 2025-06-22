@@ -26,19 +26,6 @@ just pp
 
 ## Current issues
 
-`sqlmesh plan dev` (`just pd`) fails with:
-```
-Failed models
-
-  "bronze_seed_data"
-
-    BinderException:
-      Binder Error: Column "pk_col" referenced that exists in the SELECT clause - but this column cannot be referenced before it is defined
-  
-Error: Plan application failed.
-error: Recipe `pd` failed on line 62 with exit code 1
-```
-
 Signals are not working as expected, see <https://github.com/TobikoData/sqlmesh/issues/4779>.
 To reproduce, modify the model in `models/bronze.py` 
 to enable a signal of your choice and observe the exceptions raised.

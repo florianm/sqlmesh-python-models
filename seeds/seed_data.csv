@@ -1,4 +1,4 @@
-pk_col,integer_col,number_col,boolean_col,date_col,string_col
+id,integer_col,number_col,boolean_col,date_col,string_col
 47668a32db8b61e8cab6b340571ad604,554,898.1,False,2020-06-20,vfuTYjhLdrjvySzDdNlPNDftChamekxUjLNCcvUSZY YWNXfCtYXShODfvv
 7e747b3e2917ac698ee3f4297acfea7a,88,171.6,True,2016-10-27,eVmEYVeJtPGlgoNr eWUJIQEV JznGyOzQXbsJGXgdbytmUOUxZ
 567079b1ac1cdfabd7d83b8290b0552c,744,534.5,True,2011-07-06,kgeEjvVtxpaWB xQwdXIZARBaOICYdPBUFKPuYMvvirTKQvUMTaqTzlWvthgitunxSAVWzHHPTBURyQEAQkd

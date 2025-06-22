@@ -47,12 +47,11 @@ _print_registered_signals()
 # ----------------------------------------------------------------------------#
 
 csv_fn = "seeds/seed_data.csv"
-csv_pk = "pk_col"
+csv_pk = "id"
 
 
 @model(
-    gateway="duckdb",
-    name=make_model_name(csv_fn, prefix="bronze"),
+    name=make_model_name(csv_fn, prefix="bronze", sep="."),
     kind="full",
     cron="@hourly",
     signals=[

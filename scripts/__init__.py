@@ -35,7 +35,7 @@ def unpack_file(csv_fn: str, zip_fn: str = None) -> None:
         raise FileNotFoundError(f"File '{csv_fn}' does not exist inside '{zip_fn}'.")
 
 
-def read_csv_in_chunks(csv_fn, chunk_size=100000):
+def read_csv_in_chunks(csv_fn, sep=",", chunk_size=100000):
     """Yield Pandas DataFrames in chunks from a CSV file.
 
     The CSV can be local or on AWS S3.
@@ -43,6 +43,7 @@ def read_csv_in_chunks(csv_fn, chunk_size=100000):
 
     Args:
         csv_fn (str): Path to the CSV file.
+        sep (str): Separator used in the CSV file. Default is ','.
         chunk_size (int): Number of rows per chunk. Default is 100,000.
 
     Yields:
@@ -51,7 +52,7 @@ def read_csv_in_chunks(csv_fn, chunk_size=100000):
     df_lazy = pl.read_csv(
         csv_fn,
         has_header=True,
-        separator="\t",
+        separator=sep,
         quote_char='"',
         encoding="utf-8",
         infer_schema_length=100,
@@ -84,11 +85,16 @@ def make_coldef(csv_fn: str) -> dict:
     return {f.name: f.type for f in schema.fields}
 
 
-def make_model_name(csv_fn: str, prefix=None) -> str:
+def make_model_name(csv_fn: str, prefix=None, sep="_") -> str:
     """Generate a model name based on the CSV file name.
 
     Args:
         csv_fn (str): Path to the CSV file.
+        prefix (str, optional): A prefix to prepend to the model name. Defaults to None.
+        sep (str, optional): Separator to use between prefix and file name.
+          Defaults to '_' which results in a one tier database structure.
+          Use "." for a two tier database structure, or include a "." in the prefix
+          for a three tier database structure.
 
     Returns:
         str: A model name derived from the CSV file name.
@@ -105,5 +111,5 @@ def make_model_name(csv_fn: str, prefix=None) -> str:
     base_name = os.path.basename(csv_fn)
     name, _ = os.path.splitext(base_name)
     if prefix:
-        name = f"{prefix}_{name}"
+        name = f"{prefix}{sep}{name}"
     return name
