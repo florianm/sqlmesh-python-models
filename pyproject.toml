@@ -1,0 +1,161 @@
+[project]
+name = "peoplewa-import"
+version = "0.0.1"
+description = "PeopleWA data QA and import"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+  "argparse>=1.4.0",
+  "awscli>=1.40.12",
+  "duckdb>=0.10.3",
+  "helix>=1.2.0",
+  "k3d>=2.16.1",
+  "k9s>=1.0.56",
+  "requests>=2.32.3",
+  "sqlmesh[github,web,postgres,lsp]>=0.194.1",
+  "polars==1.29.0",
+  "mkdocs>=1.6.1",
+  "mkdocs-material>=9.2.0",
+  "quarto>=0.1.0",
+  "matplotlib>=3.10.3",
+  "seaborn>=0.13.2",
+  "pandas>=2.2.3",
+  "sdv>=1.21.0",
+  "py7zr>=1.0.0",
+  "frictionless>=5.18.1",
+  "mkdocstrings[python]>=0.29.1",
+  "pre-commit>=4.2.0",
+  "marimo>=0.13.15",
+  "python-lsp-server>=1.12.2",
+  "boto3>=1.38.30",
+  "ipdb>=0.13.13",
+]
+
+[tool.ruff]
+# Exclude a variety of commonly ignored directories.
+exclude = [
+  ".bzr",
+  ".direnv",
+  ".eggs",
+  ".git",
+  ".git-rewrite",
+  ".hg",
+  ".ipynb_checkpoints",
+  ".mypy_cache",
+  "*/migrations/*",
+  ".nox",
+  ".pants.d",
+  ".pyenv",
+  ".pytest_cache",
+  ".pytype",
+  ".ruff_cache",
+  "*/static/CACHE/*",
+  ".svn",
+  ".tox",
+  ".txt",
+  ".venv",
+  ".vscode",
+  "__pypackages__",
+  "_build",
+  "buck-out",
+  "build",
+  "dist",
+  "node_modules",
+  "site-packages",
+  "venv",
+]
+
+# Same as Black.
+line-length = 88
+indent-width = 4
+
+# Assume Python 3.12
+target-version = "py312"
+
+[tool.ruff.lint]
+# https://docs.astral.sh/ruff/configuration/
+# https://docs.astral.sh/ruff/rules/
+select = [
+  "E4",
+  "E7",
+  "E9",
+  "F",
+  "UP", # pyupgrade
+  "I",  # isort
+  "E",  # pycodestyle
+  # TODO: fix below
+  # "D",    # pydocstyle
+  # "S",    # flake8-bandit
+  # "BLE",  # flake8-blind-except
+  # "FBT",  # flake8-boolean-trap
+  # "B",    # flake8-bugbear
+  # "A",    # flake8-builtins
+  # "C4",   # flake8-comprehensions
+  # "CPY",  # flake8-copyright
+  # "DTZ",  # flake8-datetimez
+  # "T10",  # flake8-debugger
+  # "DJ",   # flake8-django
+  # "EM",   # flake8-errmsg
+  # "EXE",  # flake8-executable
+  # "FIX",  # flake8-fixme
+  # "FA",   # flake8-future-annotations
+  # "INT",  # flake8-gettext
+  # "ISC",  # flake8-implicit-str-concat
+  # "ICN",  # flake8-import-conventions
+  # "LOG",  # flake8-logging
+  # "G",    # flake8-logging-format
+  # "INP",  # flake8-no-pep420
+  # "PIE",  # flake8-pie
+  # "T20",  # flake8-print
+  # "PYI",  # flake8-pyi
+  # "PT",   # flake8-pytest-style
+  # "Q",    # flake8-quotes
+  # "RSE",  # flake8-raise
+  # "RET",  # flake8-return
+  # "SLF",  # flake8-self
+  # "SIM",  # flake8-simplify
+  # "SLOT", # flake8-slots
+  # "TID",  # flake8-tidy-imports
+  # "TD",   # flake8-todos
+  # "TC",   # flake8-type-checking
+  # "ARG",  # flake8-unused-arguments
+  # "PTH",  # flake8-use-pathlib
+]
+ignore = ["S101"]
+# extend-select = []
+
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.format]
+# Like Black, use double quotes for strings.
+quote-style = "double"
+
+# Enable reformatting of code snippets in docstrings.
+# https://docs.astral.sh/ruff/settings/#format_docstring-code-format
+docstring-code-format = true
+
+# Like Black, indent with spaces, rather than tabs.
+indent-style = "space"
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = "auto"
+
+# Enable preview style formatting.
+# https://docs.astral.sh/ruff/settings/#format_preview
+preview = true
+
+# Set the line length limit used when formatting code snippets in
+# docstrings.
+#
+# This only has an effect when the `docstring-code-format` setting is
+# enabled.
+docstring-code-line-length = "dynamic"

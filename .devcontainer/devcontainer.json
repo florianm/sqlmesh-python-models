@@ -1,0 +1,72 @@
+// For format details, see https://aka.ms/devcontainer.json.
+{
+    "name": "Debian 12 (bookworm)",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "app",
+    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+    "hostRequirements": {
+        "memory": "32gb"
+    },
+    "remoteEnv": {
+        // For use in GitHub Codespaces: use repository codespaces secret
+        // "MY_SECRET_VAR": "${{ secrets.MY_SECRET_VAR }}",
+        "COMPOSE_BAKE": "true"
+    },
+    "features": {
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+        "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {},
+        "ghcr.io/devcontainers-extra/features/pre-commit:2": {},
+        "ghcr.io/devcontainers-extra/features/ruff:1": {},
+        "ghcr.io/guiyomh/features/just:0": {},
+        "ghcr.io/dhoeric/features/hadolint:1": {},
+        "ghcr.io/robbert229/devcontainer-features/postgresql-client:1": {
+            "version": "17"
+        },
+        "ghcr.io/rocker-org/devcontainer-features/quarto-cli:1": {
+            "version": "1.8.11"
+        }
+    },
+    "mounts": [
+        "source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+    ],
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "charliermarsh.ruff",
+                "exiasr.hadolint",
+                "kevinrose.vsc-python-indent",
+                "mosapride.zenkaku",
+                "ms-azuretools.vscode-docker",
+                "ms-azuretools.vscode-containers",
+                "ms-python.python",
+                "ms-toolsai.jupyter",
+                "ms-toolsai.vscode-jupyter-cell-tags",
+                "ms-toolsai.vscode-jupyter-renderers",
+                "ms-toolsai.vscode-jupyter-slideshow",
+                "ms-python.vscode-pylance",
+                "quarto.quarto",
+                "njpwerner.autodocstring",
+                "redhat.vscode-yaml",
+                "nefrob.vscode-just-syntax",
+                "shardulm94.trailing-spaces",
+                "tamasfe.even-better-toml",
+                "yzhang.markdown-all-in-one",
+                "MS-vsliveshare.vsliveshare",
+                "GitHub.copilot-chat",
+                "tobikodata.sqlmesh",
+                "randomfractalsinc.duckdb-sql-tools"
+            ]
+        }
+    },
+    "containerEnv": {
+        "DISPLAY": "SQLMesh Python Models",
+        "PYTHONUNBUFFERED": "True",
+        "UV_LINK_MODE": "copy",
+        "UV_PROJECT_ENVIRONMENT": ".venv"
+    },
+    "onCreateCommand": "sudo chown $(whoami) /var/run/docker.sock",
+    "postCreateCommand": "uv sync --frozen",
+    "postStartCommand": "uv run pre-commit install",
+    "remoteUser": "vscode",
+    "forwardPorts": [5432]
+}

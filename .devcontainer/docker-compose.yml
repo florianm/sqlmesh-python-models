@@ -1,0 +1,54 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+      args:
+        # In Credentials from GitHub repo secrets:
+        # - MY_SECRET_VAR=${MY_SECRET_VAR}
+        - UV_VERSION=latest
+        - DEBIAN_VERSION=bookworm
+
+    # In local environments, use .env
+    # In GH Codespaces, devcontainer.json feeds in repository secrets
+    # env_file:
+    #     - ../.env
+
+    volumes:
+      - ../..:/workspaces:cached
+      - peoplewa-bashhistory:/commandhistory
+
+    # Overrides default command so things don't shut down after the process ends.
+    command: sleep infinity
+
+    # Runs app on the same network as the database container, allows "forwardPorts" in devcontainer.json function.
+    # See https://github.com/docker/compose/issues/8598
+    # host doesn't work
+    # bridge doesn't work
+    network_mode: service:postgres
+
+    security_opt:
+      - apparmor=docker-default
+      # - no-new-privileges=true  # This breaks sudo commands, e.g. onCreateCommand
+
+    # Use "forwardPorts" in **devcontainer.json** to forward an app port locally.
+    # (Adding the "ports" property to this file will not forward from a Codespace.)
+
+  postgres:
+    # Alternative: https://hub.docker.com/r/percona/percona-distribution-postgresql/
+    image: postgres:17
+    restart: unless-stopped
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: peoplewa
+      POSTGRES_DB: peoplewa
+      POSTGRES_PASSWORD: peoplewa
+
+
+    # Add "forwardPorts": ["5432"] to **devcontainer.json** to forward PostgreSQL locally.
+    # (Adding the "ports" property to this file will not forward from a Codespace.)
+
+volumes:
+  postgres-data:
+  peoplewa-bashhistory:
