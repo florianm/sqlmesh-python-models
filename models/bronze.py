@@ -13,12 +13,8 @@ Output: A Pandas dataframe.
 import typing as t
 
 import pandas as pd
-from sqlglot.expressions import to_column  # , Literal
+from sqlglot.expressions import to_column
 from sqlmesh import model
-
-# # ----------------------------------------------------------------------------#
-# # Debug: are signals loaded?
-from sqlmesh.core.signal import signal as _signal_decorator
 
 from scripts import (
     make_coldef,
@@ -26,15 +22,17 @@ from scripts import (
     read_csv_in_chunks,
 )
 
+# # ----------------------------------------------------------------------------#
+# # Debug: are signals loaded?
+# from sqlmesh.core.signal import signal as _signal_decorator
+# def _print_registered_signals():
+#     print("🔍 models/bronze.py outside model class - Registered signals:")
+#     for s in _signal_decorator.get_registry().values():
+#         print(f" - {s.name}")
+#     print("🔍 End")
 
-def _print_registered_signals():
-    print("🔍 models/bronze.py outside model class - Registered signals:")
-    for s in _signal_decorator.get_registry().values():
-        print(f" - {s.name}")
-    print("🔍 End")
 
-
-_print_registered_signals()
+# _print_registered_signals()
 # # Output when running sqlmesh plan dev:
 # # 🔍 models/bronze.py outside model class - Registered signals:
 # #  - one_week_ago
@@ -53,9 +51,12 @@ csv_pk = "id"
 @model(
     name=make_model_name(csv_fn, prefix="bronze", sep="."),
     kind="full",
-    cron="@hourly",
+    cron="*/5 * * * *",
     signals=[
-        # ("always_true", {},),  # Signal 'always_true' is undefined
+        (
+            "always_true",
+            {},
+        ),
         # ("ext_file_exists", {"file_path": Literal.string(csv_fn)}),
         # ("ext_file_updated",
         # #{"execution_dt": "@execution_dt", "file_path": csv_fn}),

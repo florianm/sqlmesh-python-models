@@ -1,7 +1,7 @@
 [project]
-name = "peoplewa-import"
+name = "sqlmesh_python_models"
 version = "0.0.1"
-description = "PeopleWA data QA and import"
+description = "An example SQLMesh project with Python models."
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [

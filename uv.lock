@@ -1990,65 +1990,6 @@ wheels = [
 ]
 
 [[package]]
-name = "peoplewa-import"
-version = "0.0.1"
-source = { virtual = "." }
-dependencies = [
-    { name = "argparse" },
-    { name = "awscli" },
-    { name = "boto3" },
-    { name = "duckdb" },
-    { name = "frictionless" },
-    { name = "helix" },
-    { name = "ipdb" },
-    { name = "k3d" },
-    { name = "k9s" },
-    { name = "marimo" },
-    { name = "matplotlib" },
-    { name = "mkdocs" },
-    { name = "mkdocs-material" },
-    { name = "mkdocstrings", extra = ["python"] },
-    { name = "pandas" },
-    { name = "polars" },
-    { name = "pre-commit" },
-    { name = "py7zr" },
-    { name = "python-lsp-server" },
-    { name = "quarto" },
-    { name = "requests" },
-    { name = "sdv" },
-    { name = "seaborn" },
-    { name = "sqlmesh", extra = ["github", "lsp", "postgres", "web"] },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "argparse", specifier = ">=1.4.0" },
-    { name = "awscli", specifier = ">=1.40.12" },
-    { name = "boto3", specifier = ">=1.38.30" },
-    { name = "duckdb", specifier = ">=0.10.3" },
-    { name = "frictionless", specifier = ">=5.18.1" },
-    { name = "helix", specifier = ">=1.2.0" },
-    { name = "ipdb", specifier = ">=0.13.13" },
-    { name = "k3d", specifier = ">=2.16.1" },
-    { name = "k9s", specifier = ">=1.0.56" },
-    { name = "marimo", specifier = ">=0.13.15" },
-    { name = "matplotlib", specifier = ">=3.10.3" },
-    { name = "mkdocs", specifier = ">=1.6.1" },
-    { name = "mkdocs-material", specifier = ">=9.2.0" },
-    { name = "mkdocstrings", extras = ["python"], specifier = ">=0.29.1" },
-    { name = "pandas", specifier = ">=2.2.3" },
-    { name = "polars", specifier = "==1.29.0" },
-    { name = "pre-commit", specifier = ">=4.2.0" },
-    { name = "py7zr", specifier = ">=1.0.0" },
-    { name = "python-lsp-server", specifier = ">=1.12.2" },
-    { name = "quarto", specifier = ">=0.1.0" },
-    { name = "requests", specifier = ">=2.32.3" },
-    { name = "sdv", specifier = ">=1.21.0" },
-    { name = "seaborn", specifier = ">=0.13.2" },
-    { name = "sqlmesh", extras = ["github", "web", "postgres", "lsp"], specifier = ">=0.194.1" },
-]
-
-[[package]]
 name = "petl"
 version = "1.7.16"
 source = { registry = "https://pypi.org/simple" }
@@ -3117,6 +3058,65 @@ web = [
     { name = "sse-starlette" },
     { name = "uvicorn", extra = ["standard"] },
     { name = "watchfiles" },
+]
+
+[[package]]
+name = "sqlmesh-python-models"
+version = "0.0.1"
+source = { virtual = "." }
+dependencies = [
+    { name = "argparse" },
+    { name = "awscli" },
+    { name = "boto3" },
+    { name = "duckdb" },
+    { name = "frictionless" },
+    { name = "helix" },
+    { name = "ipdb" },
+    { name = "k3d" },
+    { name = "k9s" },
+    { name = "marimo" },
+    { name = "matplotlib" },
+    { name = "mkdocs" },
+    { name = "mkdocs-material" },
+    { name = "mkdocstrings", extra = ["python"] },
+    { name = "pandas" },
+    { name = "polars" },
+    { name = "pre-commit" },
+    { name = "py7zr" },
+    { name = "python-lsp-server" },
+    { name = "quarto" },
+    { name = "requests" },
+    { name = "sdv" },
+    { name = "seaborn" },
+    { name = "sqlmesh", extra = ["github", "lsp", "postgres", "web"] },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "argparse", specifier = ">=1.4.0" },
+    { name = "awscli", specifier = ">=1.40.12" },
+    { name = "boto3", specifier = ">=1.38.30" },
+    { name = "duckdb", specifier = ">=0.10.3" },
+    { name = "frictionless", specifier = ">=5.18.1" },
+    { name = "helix", specifier = ">=1.2.0" },
+    { name = "ipdb", specifier = ">=0.13.13" },
+    { name = "k3d", specifier = ">=2.16.1" },
+    { name = "k9s", specifier = ">=1.0.56" },
+    { name = "marimo", specifier = ">=0.13.15" },
+    { name = "matplotlib", specifier = ">=3.10.3" },
+    { name = "mkdocs", specifier = ">=1.6.1" },
+    { name = "mkdocs-material", specifier = ">=9.2.0" },
+    { name = "mkdocstrings", extras = ["python"], specifier = ">=0.29.1" },
+    { name = "pandas", specifier = ">=2.2.3" },
+    { name = "polars", specifier = "==1.29.0" },
+    { name = "pre-commit", specifier = ">=4.2.0" },
+    { name = "py7zr", specifier = ">=1.0.0" },
+    { name = "python-lsp-server", specifier = ">=1.12.2" },
+    { name = "quarto", specifier = ">=0.1.0" },
+    { name = "requests", specifier = ">=2.32.3" },
+    { name = "sdv", specifier = ">=1.21.0" },
+    { name = "seaborn", specifier = ">=0.13.2" },
+    { name = "sqlmesh", extras = ["github", "web", "postgres", "lsp"], specifier = ">=0.194.1" },
 ]
 
 [[package]]

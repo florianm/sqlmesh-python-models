@@ -1,6 +1,6 @@
 set dotenv-load
 
-ns := "peoplewa-import"
+ns := "sqlmesh-python-models"
 
 # Choose a task to run
 default:
@@ -57,13 +57,21 @@ psql:
 dev:
   uv run sqlmesh ui --port 8080
 
-# Run SQLMesh plan in DEV
+# Apply SQLMesh plan to DEV
 pd:
   uv run sqlmesh plan dev 
 
-# Run SQLMesh plan in PROD
+# Run SQLMesh plan in DEV
+rd:
+  uv run sqlmesh run dev
+
+# Apply SQLMesh plan to PROD
 pp:
   uv run sqlmesh plan
+
+# Run SQLMesh plan in PROD
+rp:
+  uv run sqlmesh run
 
 # Run all SQLMesh audits
 audit:
