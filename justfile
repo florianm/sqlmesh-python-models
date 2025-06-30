@@ -6,6 +6,12 @@ ns := "sqlmesh-python-models"
 default:
   just --choose
 
+# Format and lint
+fix:
+  ruff format
+  ruff check --fix
+  uv run sqlmesh lint
+
 # Install project tools
 prereqs:
   uv sync
@@ -59,7 +65,7 @@ dev:
 
 # Apply SQLMesh plan to DEV
 pd:
-  uv run sqlmesh plan dev 
+  uv run sqlmesh plan dev --auto-apply
 
 # Run SQLMesh plan in DEV
 rd:
@@ -67,7 +73,7 @@ rd:
 
 # Apply SQLMesh plan to PROD
 pp:
-  uv run sqlmesh plan
+  uv run sqlmesh plan --auto-apply
 
 # Run SQLMesh plan in PROD
 rp:

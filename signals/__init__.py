@@ -2,6 +2,8 @@ import datetime
 import os
 import re
 
+from croniter import croniter
+
 try:
     import boto3
 except ImportError:
@@ -20,7 +22,7 @@ def one_week_ago(batch: DatetimeRanges) -> bool | DatetimeRanges:
     return [(start, end) for start, end in batch if start <= dt]
 
 
-@signal(name="always_true")
+@signal()
 def always_true(batch: DatetimeRanges) -> bool:
     """Signal that always returns True."""
     print("Signal always_true called")
@@ -58,27 +60,73 @@ def ext_file_exists(
 
 @signal(name="ext_file_updated")
 def ext_file_updated(
-    batch: DatetimeRanges, execution_dt: str | datetime.datetime, file_path: str
+    batch: DatetimeRanges,
+    file_path: str,
+    execution_ts: str | datetime.datetime,
+    cron_str: str = "@hourly",
 ) -> bool:
-    """Generic file update signal."""
-    print(
-        f"Checking if file '{file_path}' was updated after "
-        f"execution time '{execution_dt}'"
-    )
-    # import ipdb; ipdb.set_trace()
+    """Return True if a given file was modified after the previous execution.
 
-    # Parse execution_dt
-    if isinstance(execution_dt, str):
+    Args:
+        batch (DatetimeRanges) Automatically received by the signal when used
+          from a SQL model.
+        file_path (str) The path to the file to be checked for a modification
+          date past execution_ts.
+        execution_ts (str | datetime.datetime) The value of the macro
+          `@execution_ts`, which is the current run of the model.
+        cron_str (str) The cron expression string, default: "@hourly" as per
+          SQLMesh default. Pass the model's cron string.
+
+    Returns:
+        bool Whether to run the model or not.
+
+    Examples:
+        MODEL (
+            ...,
+            signals [
+                ext_file_updated(execution_ts := @execution_ts,
+                file_path := 'path/to/file.csv',
+                cron_str = '*/5 * * * *'
+                )
+            ]
+        )
+    """
+    print(f"Got execution time {execution_ts}")
+    # Parse execution_ts
+    if isinstance(execution_ts, str):
         try:
-            execution_dt = datetime.datetime.fromisoformat(execution_dt)
+            execution_ts = datetime.datetime.fromisoformat(execution_ts)
         except ValueError:
             raise ValueError(
-                f"execution_dt must be datetime or ISO string, got '{execution_dt}'"
+                f"execution_ts must be datetime or ISO string, got '{execution_ts}'"
             )
-    elif not isinstance(execution_dt, datetime.datetime):
+    elif not isinstance(execution_ts, datetime.datetime):
         raise ValueError(
-            f"execution_dt must be datetime or ISO string, got {type(execution_dt)}"
+            f"execution_ts must be datetime or ISO string, got {type(execution_ts)}"
         )
+
+    # Reconstruct last execution date from execution_ts and cron string
+    cron_map = {
+        "@yearly": "0 0 1 1 *",
+        "@annually": "0 0 1 1 *",
+        "@monthly": "0 0 1 * *",
+        "@weekly": "0 0 * * 0",
+        "@daily": "0 0 * * *",
+        "@midnight": "0 0 * * *",
+        "@hourly": "0 * * * *",
+    }
+    cron_string = cron_map.get(cron_str, cron_str)
+
+    if not croniter.is_valid(cron_string):
+        raise ValueError(f"Invalid cron string: {cron_string}")
+
+    cron = croniter(cron_string, execution_ts)
+    last_run = cron.get_prev(datetime.datetime)
+
+    print(
+        f"The last run before '{execution_ts}' based on cron schedule '{cron_string}' "
+        f"was {last_run}"
+    )
 
     # Parse file_path
     if file_path.startswith("s3://"):
@@ -104,19 +152,14 @@ def ext_file_updated(
         file_mtime = datetime.datetime.fromtimestamp(os.path.getmtime(file_path))
 
     # Fix timezones
-    if execution_dt.tzinfo is None and file_mtime.tzinfo is not None:
-        execution_dt = execution_dt.replace(tzinfo=datetime.UTC)
-    elif execution_dt.tzinfo is not None and file_mtime.tzinfo is None:
+    if last_run.tzinfo is None and file_mtime.tzinfo is not None:
+        last_run = last_run.replace(tzinfo=datetime.UTC)
+    elif last_run.tzinfo is not None and file_mtime.tzinfo is None:
         file_mtime = file_mtime.replace(tzinfo=datetime.UTC)
 
-    return file_mtime > execution_dt
-
-
-# from sqlmesh.core.signal import signal as _signal_decorator
-
-# def _print_registered_signals():
-#     print("🔍 Registered signals:")
-#     for s in _signal_decorator.get_registry().values():
-#         print(f" - {s.name}")
-
-# _print_registered_signals()
+    will_run = file_mtime > last_run
+    print(
+        f"Checking if file '{file_path}' was updated ({file_mtime}) after "
+        f"last run ({last_run}): {will_run}"
+    )
+    return will_run

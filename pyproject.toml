@@ -12,7 +12,7 @@ dependencies = [
   "k3d>=2.16.1",
   "k9s>=1.0.56",
   "requests>=2.32.3",
-  "sqlmesh[github,web,postgres,lsp]>=0.194.1",
+  "sqlmesh[github,web,postgres,lsp]>=0.196.4",
   "polars==1.29.0",
   "mkdocs>=1.6.1",
   "mkdocs-material>=9.2.0",

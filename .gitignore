@@ -182,3 +182,5 @@ seeds/doc/
 seeds/doh/
 seeds/doecth/
 *.7z
+
+data/ducklake/*.parquet

@@ -2977,11 +2977,11 @@ wheels = [
 
 [[package]]
 name = "sqlglot"
-version = "26.29.0"
+version = "26.30.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/07/53/ee0985ee4a86fadb80a26b3388d1a109b8fe4a8671202b6aff0196fa2c25/sqlglot-26.29.0.tar.gz", hash = "sha256:023f1f9c35f0b5c9e5614e87624567bf20a69940995a4cbfe89c5481b9239474", size = 5335487, upload-time = "2025-06-17T21:02:47.243Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c3/44/1fc8f0e5217543bfed1b8d208642cc1ab72d21b6cc14bbae6610f38443f2/sqlglot-26.30.0.tar.gz", hash = "sha256:c136f00850d730d357d800d23f7d7f35e962d76b248c172b86f9dcc77115c9fa", size = 5339339, upload-time = "2025-06-21T11:06:24.509Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ef/9e/14f111ddbc0b7f15e3ce886a69548c26fa1eb3571a63c1bf5f060cbe9f43/sqlglot-26.29.0-py3-none-any.whl", hash = "sha256:373376bab433d55b291ccbbf9fd59e08a59cde059bdb64e32d1f15accc07ac65", size = 470167, upload-time = "2025-06-17T21:02:45.067Z" },
+    { url = "https://files.pythonhosted.org/packages/13/90/4cf168c31b804e628f11238eb370dcb8a6b3f09e7e7e793a5d192cbef3be/sqlglot-26.30.0-py3-none-any.whl", hash = "sha256:7e6db3a4c4a7c421413339027b2166cfae4504b785dfabcfceb47f5c813ba8d0", size = 472603, upload-time = "2025-06-21T11:06:22.101Z" },
 ]
 
 [package.optional-dependencies]
@@ -3009,7 +3009,7 @@ wheels = [
 
 [[package]]
 name = "sqlmesh"
-version = "0.194.1"
+version = "0.196.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "astor" },
@@ -3031,9 +3031,9 @@ dependencies = [
     { name = "tenacity" },
     { name = "time-machine" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/52/7a/5a1905a270fcfb8da37fd04db817d99574c4dd83cf5b8310c53b79f8bb95/sqlmesh-0.194.1.tar.gz", hash = "sha256:12b8881665cf5f17d6c463cb294e0381aa0a63b01412094567b18ffd25788096", size = 10055199, upload-time = "2025-06-19T17:09:18.653Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/4c/24/ff8a7c9eeccbf9d4cd978aabffb4baa3059cb9c1591ff9c55a64b1f3a618/sqlmesh-0.196.4.tar.gz", hash = "sha256:aca2ed8d275591027ee3d4364c90216467330d6629b1d489747a074076b22510", size = 10136355, upload-time = "2025-06-26T17:24:30.027Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/52/55/8152b65425f9201b5c70a2c20a9125a0b8d92bd17c924158a5aeb0edcdf2/sqlmesh-0.194.1-py3-none-any.whl", hash = "sha256:e3b3716e59ccd5e4b06ee4128c03b92a75761189112cc3b9c349343190087c43", size = 5480942, upload-time = "2025-06-19T17:09:14.467Z" },
+    { url = "https://files.pythonhosted.org/packages/18/ea/fd01ebccfcb545cef7d27bbec3fd9c631f30ee5f836a828a3a7a098839ac/sqlmesh-0.196.4-py3-none-any.whl", hash = "sha256:14d4a825a6e610d4e4efd8fe634bfb34efd67b2c378c835def305fe1bd1b9d20", size = 5544187, upload-time = "2025-06-26T17:24:24.403Z" },
 ]
 
 [package.optional-dependencies]
@@ -3116,7 +3116,7 @@ requires-dist = [
     { name = "requests", specifier = ">=2.32.3" },
     { name = "sdv", specifier = ">=1.21.0" },
     { name = "seaborn", specifier = ">=0.13.2" },
-    { name = "sqlmesh", extras = ["github", "web", "postgres", "lsp"], specifier = ">=0.194.1" },
+    { name = "sqlmesh", extras = ["github", "web", "postgres", "lsp"], specifier = ">=0.196.4" },
 ]
 
 [[package]]

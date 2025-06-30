@@ -43,38 +43,6 @@ just rp
 
 ## Current issues
 
-Signals are not working as expected, see
-<https://github.com/TobikoData/sqlmesh/issues/4779>.
+SQL models do not interpolate time macros as expected.
 
-To reproduce, modify the model in `models/bronze.py`
-to enable a signal of your choice and observe the exceptions raised.
-Enable print debug blocks for diagnostic output.
-
-To fix, apply the patch from <https://github.com/TobikoData/sqlmesh/issues/4779>:
-
-Patch `sqlmesh/core/model/definition.py#L2340` > create_python_model():
-
-```
-# Import "signal" at L45
-from sqlmesh.core.signal import signal, SignalRegistry
-
-# Get the signal registry before create_python_model returns
-signal_definitions=signal.get_registry()
-
-    return _create_model(
-        PythonModel,
-        name,
-        path=path,
-        depends_on=depends_on,
-        entrypoint=entrypoint,
-        python_env=python_env,
-        macros=macros,
-        jinja_macros=jinja_macros,
-        module_path=module_path,
-        variables=variables,
-        blueprint_variables=blueprint_variables,
-        # Add signal_definitions explicitly:
-        signal_definitions=signal_definitions,
-        **kwargs,
-    )
-```
+The DDL does not remember the last run and returns 
