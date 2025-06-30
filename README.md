@@ -62,9 +62,12 @@ MODEL (
   grain "id",
   cron '*/5 * * * *',
   signals [
-    ext_file_updated(execution_ts := @execution_ts,
-    file_path := 'seeds/seed_data.csv',
-    cron_str := '*/5 * * * *'
+    ext_file_updated(
+      file_path := 'seeds/seed_data.csv',
+      cron_str := '*/5 * * * *',
+      model_name := 'bronze.seed_data',
+      execution_tstz := @execution_tstz,
+      start_ts := @start_ts
     )
   ]
 );
@@ -75,32 +78,21 @@ FROM read_csv('seeds/seed_data.csv', delim = ',', header = true)
 ```
 
 ### Debug output from the plan
+
 ```
 /workspaces/sqlmesh-python-models (main) $ just pd
-uv run sqlmesh plan dev
-Uninstalled 2 packages in 178ms
-Installed 2 packages in 97ms
+Signal 'ext_file_updated' called with
+  file_path 'seeds/seed_data.csv'
+  execution_tstz '1970-01-01 00:00:00+00:00'
+  start_ts '1970-01-01 00:00:00'
+  cron_str '*/5 * * * *'
+  model_name 'bronze.seed_data'
 
-`dev` environment will be initialized
-
-Requirements:
-    + boto3==1.38.41
-    + croniter==6.0.0
-Models:
-└── Added:
-    └── bronze__dev.seed_data
-Models needing backfill:
-└── bronze__dev.seed_data: [full refresh]
-Apply - Backfill Tables [y/n]: y
-
-Updating physical layer ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100.0% • 1/1 • 0:00:00
-
-✔ Physical layer updated
-
-Got execution time 1970-01-01 00:00:00
-The last run before '1970-01-01 00:00:00' based on cron schedule '*/5 * * * *' was 1969-12-31 23:55:00
-Checking if file 'seeds/seed_data.csv' was updated (2025-06-22 11:57:42.994376) after last run (1969-12-31 23:55:00): True
-[1/1] bronze__dev.seed_data   [full refresh]   0.17s
+Found execution_ts: '1970-01-01 00:00:00+00:00'
+Guessing this run started on '1970-01-01 00:00:00+00:00'
+The last run before '1970-01-01 00:00:00+00:00' based on cron schedule '*/5 * * * *' was '1969-12-31 23:55:00+00:00'
+Checking if file 'seeds/seed_data.csv' was updated (2025-06-22 11:57:42.994376+00:00) after last run (1969-12-31 23:55:00+00:00): True
+[1/1] bronze__dev.seed_data   [full refresh]   0.18s
 Executing model batches ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100.0% • 1/1 • 0:00:00
 
 ✔ Model batches executed

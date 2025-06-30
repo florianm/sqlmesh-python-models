@@ -10,7 +10,8 @@ except ImportError:
     boto3 = None
 
 
-from sqlmesh import DatetimeRanges, signal
+from sqlglot.expressions import Literal
+from sqlmesh import DatetimeRanges, ExecutionContext, signal
 from sqlmesh.utils.date import to_datetime
 
 
@@ -58,12 +59,18 @@ def ext_file_exists(
         return os.path.exists(file_path)
 
 
-@signal(name="ext_file_updated")
+def quote_dotted_string(s):
+    return ".".join(f'"{part}"' for part in s.split("."))
+
+
+@signal()
 def ext_file_updated(
     batch: DatetimeRanges,
     file_path: str,
-    execution_ts: str | datetime.datetime,
     cron_str: str = "@hourly",
+    model_name: str = None,
+    context: ExecutionContext = None,
+    **kwargs,
 ) -> bool:
     """Return True if a given file was modified after the previous execution.
 
@@ -72,10 +79,11 @@ def ext_file_updated(
           from a SQL model.
         file_path (str) The path to the file to be checked for a modification
           date past execution_ts.
-        execution_ts (str | datetime.datetime) The value of the macro
-          `@execution_ts`, which is the current run of the model.
-        cron_str (str) The cron expression string, default: "@hourly" as per
-          SQLMesh default. Pass the model's cron string.
+        cron_str (str) The cron expression string, default: "@hourly"
+        model_name (str) The model name as defined in the DDL,
+          e.g. 'catalog.schema.dataset'
+        kwargs Any kwargs like `execution_tstz` or `start_ts`.
+        SQLMesh automatically injects the ExecutionContext.
 
     Returns:
         bool Whether to run the model or not.
@@ -84,26 +92,79 @@ def ext_file_updated(
         MODEL (
             ...,
             signals [
-                ext_file_updated(execution_ts := @execution_ts,
-                file_path := 'path/to/file.csv',
-                cron_str = '*/5 * * * *'
+                ext_file_updated(
+                file_path := 'path/to/data.csv',
+                cron_str := '*/5 * * * *',
+                model_name := 'catalog.schema.dataset'
+                )
+            ]
+
+             signals [
+                c(
+                file_path := 'path/to/data.csv',
+                cron_str := '*/5 * * * *',
+                model_name := 'catalog.schema.dataset',
+                execution_tstz := @execution_tstz,
+                start_ts := @start_ts,
                 )
             ]
         )
     """
-    print(f"Got execution time {execution_ts}")
-    # Parse execution_ts
-    if isinstance(execution_ts, str):
-        try:
-            execution_ts = datetime.datetime.fromisoformat(execution_ts)
-        except ValueError:
-            raise ValueError(
-                f"execution_ts must be datetime or ISO string, got '{execution_ts}'"
-            )
-    elif not isinstance(execution_ts, datetime.datetime):
-        raise ValueError(
-            f"execution_ts must be datetime or ISO string, got {type(execution_ts)}"
+    # Diagnostics
+    print(
+        "Signal 'ext_file_updated' called with\n"
+        f"  file_path '{file_path}'\n"
+        f"  execution_tstz {kwargs.get('execution_tstz', 'NA')}\n"
+        f"  start_ts {kwargs.get('start_ts', 'NA')}\n"
+        f"  cron_str '{cron_str}'\n"
+        f"  model_name '{model_name}'\n"
+    )
+
+    this_run_ec = None
+    this_run_et = None
+    last_run = None
+
+    # Parse ExecutionContext
+    # Needs the model name as snapshots contains snapshots of all models
+    mn = quote_dotted_string(model_name)
+    if mn in context.snapshots:
+        epoch_millis = context.snapshots[mn].created_ts
+        this_run_ec = datetime.datetime.fromtimestamp(epoch_millis / 1000.0).replace(
+            tzinfo=datetime.UTC
         )
+        print(f"Found ExecutionContext created_ts: '{this_run_ec}'")
+    else:
+        print(f"Found no snapshot of model {mn} in the ExecutionContext.")
+
+    # Parse execution_tstz
+    execution_tstz = kwargs.get("execution_tstz", None)
+    if execution_tstz:
+        if isinstance(execution_tstz, str):
+            try:
+                this_run_et = datetime.datetime.fromisoformat(execution_tstz)
+            except ValueError:
+                raise ValueError(
+                    "execution_ts must be datetime or ISO string, "
+                    f"got '{execution_tstz}'"
+                )
+        elif isinstance(execution_tstz, Literal):
+            try:
+                this_run_et = datetime.datetime.fromisoformat(execution_tstz.to_py())
+            except ValueError:
+                raise ValueError(
+                    "execution_ts failed to parse from Sqlglot Literal, "
+                    f"got '{execution_tstz}'"
+                )
+        elif not isinstance(execution_tstz, datetime.datetime):
+            raise ValueError(
+                "execution_ts must be datetime, ISO string, or "
+                f"Sqlglot Literal, got {type(execution_tstz)}"
+            )
+        else:
+            this_run_et = execution_tstz
+
+        this_run_et = this_run_et.replace(tzinfo=datetime.UTC)
+        print(f"Found execution_ts: '{this_run_et}'")
 
     # Reconstruct last execution date from execution_ts and cron string
     cron_map = {
@@ -118,15 +179,23 @@ def ext_file_updated(
     cron_string = cron_map.get(cron_str, cron_str)
 
     if not croniter.is_valid(cron_string):
-        raise ValueError(f"Invalid cron string: {cron_string}")
+        raise ValueError(f"Invalid cron string: '{cron_string}'")
 
-    cron = croniter(cron_string, execution_ts)
-    last_run = cron.get_prev(datetime.datetime)
+    # Pick our best guess for current execution time
+    # from ExecutionContext and execution_tstz
+    best_guess = max(filter(None, [this_run_ec, this_run_et]), default=None)
+    print(f"Guessing this run started on '{best_guess}'.")
 
-    print(
-        f"The last run before '{execution_ts}' based on cron schedule '{cron_string}' "
-        f"was {last_run}"
-    )
+    # Substract cron interval to calculate time of last execution
+    if best_guess:
+        cron = croniter(cron_string, best_guess)
+        last_run = cron.get_prev(datetime.datetime).replace(tzinfo=datetime.UTC)
+
+        print(
+            f"The last run before '{best_guess}' "
+            f"based on cron schedule '{cron_string}' "
+            f"was '{last_run}'"
+        )
 
     # Parse file_path
     if file_path.startswith("s3://"):
@@ -152,9 +221,9 @@ def ext_file_updated(
         file_mtime = datetime.datetime.fromtimestamp(os.path.getmtime(file_path))
 
     # Fix timezones
-    if last_run.tzinfo is None and file_mtime.tzinfo is not None:
-        last_run = last_run.replace(tzinfo=datetime.UTC)
-    elif last_run.tzinfo is not None and file_mtime.tzinfo is None:
+    if best_guess.tzinfo is None and file_mtime.tzinfo is not None:
+        best_guess = best_guess.replace(tzinfo=datetime.UTC)
+    elif best_guess.tzinfo is not None and file_mtime.tzinfo is None:
         file_mtime = file_mtime.replace(tzinfo=datetime.UTC)
 
     will_run = file_mtime > last_run

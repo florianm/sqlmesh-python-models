@@ -6,9 +6,12 @@ MODEL (
   grain "id",
   cron '*/5 * * * *',
   signals [
-    ext_file_updated(execution_ts := @execution_tstz,
-    file_path := 'seeds/seed_data.csv',
-    cron_str := '*/5 * * * *'
+    ext_file_updated(
+      file_path := 'seeds/seed_data.csv',
+      cron_str := '*/5 * * * *',
+      model_name := 'bronze.seed_data',
+      execution_tstz := @execution_tstz,
+      start_ts := @start_ts
     )
   ]
 );
