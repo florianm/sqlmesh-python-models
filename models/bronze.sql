@@ -6,7 +6,7 @@ MODEL (
   grain "id",
   cron '*/5 * * * *',
   signals [
-    ext_file_updated(execution_ts := @execution_ts,
+    ext_file_updated(execution_ts := @execution_tstz,
     file_path := 'seeds/seed_data.csv',
     cron_str := '*/5 * * * *'
     )
@@ -14,5 +14,5 @@ MODEL (
 );
 
 SELECT
-  *, @execution_ts as "execution_ts"
+  *, @execution_ts as "execution_ts", @execution_tstz as "execution_tstz"
 FROM read_csv('seeds/seed_data.csv', delim = ',', header = true)

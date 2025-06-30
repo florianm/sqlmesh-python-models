@@ -49,7 +49,7 @@ SQL models do not interpolate time macros as expected.
 
 Given the model `models/bronze.sql`
 and the signal `ext_file_updated`  defined in `signals/__init__.py`,
-the DDL does interpolates `@execution_ts` as `1970-01-01 00:00:00`,
+the DDL interpolates `@execution_ts` as `1970-01-01 00:00:00`,
 whereas the SQL body interpolates `@execution_ts` as `2025-06-30 00:00:00`,
 which is the correct **date** but misses the **time** component.
 
@@ -114,8 +114,9 @@ Updating virtual layer  ━━━━━━━━━━━━━━━━━━�
 The SQL statement itself seems to get the date but is missing the time:
 
 ```
-/workspaces/sqlmesh-python-models (main) $ uv run sqlmesh render bronze.seed_data
-
-SELECT *, '2025-06-30 00:00:00' AS "execution_ts"
+/workspaces/sqlmesh-pythnon-models (main) $ uv run sqlmesh render bronze.seed_data
+SELECT *,
+  '2025-06-30 00:00:00' AS "execution_ts",
+  '2025-06-30 00:00:00+00:00' AS "execution_tstz"
 FROM READ_CSV('seeds/seed_data.csv', "delim" = ',', "header" = TRUE) AS "_q_0"
 ```
