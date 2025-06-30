@@ -53,11 +53,17 @@ the DDL interpolates `@execution_ts` as `1970-01-01 00:00:00`,
 whereas the SQL body interpolates `@execution_ts` as `2025-06-30 00:00:00`,
 which is the correct **date** but misses the **time** component.
 
+It is probably incorrect to call the macro variables from the DDL.
+
+However, the signal itself can access the Execution context, and
+with the help of the model name and the cron schedule we can
+(somewhat clumsily) reconstruct the last execution time.
+
 ### Model
 
 ```
 MODEL (
-  name bronze.seed_data,
+  name peoplewa.bronze.seed_data,
   kind FULL,
   grain "id",
   cron '*/5 * * * *',
@@ -65,41 +71,47 @@ MODEL (
     ext_file_updated(
       file_path := 'seeds/seed_data.csv',
       cron_str := '*/5 * * * *',
-      model_name := 'bronze.seed_data',
-      execution_tstz := @execution_tstz,
-      start_ts := @start_ts
-    )
+      model_name := 'peoplewa.bronze.seed_data',
+      execution_tstz := @execution_tstz
+    ),
   ]
 );
 
 SELECT
-  *, @execution_ts as "execution_ts"
+  *, @execution_ts as "execution_ts", @execution_tstz as "execution_tstz"
 FROM read_csv('seeds/seed_data.csv', delim = ',', header = true)
 ```
 
 ### Debug output from the plan
 
+Pretend we've updated the CSV:
 ```
-/workspaces/sqlmesh-python-models (main) $ just pd
+touch seeds/seed_data.csv
+```
+
+Re-run the plan - now it should detect the updated mtime of the CSV and re-run the model.
+
+```
+/workspaces/sqlmesh-python-models (main) $ just rd
+uv run sqlmesh run dev
 Signal 'ext_file_updated' called with
   file_path 'seeds/seed_data.csv'
   execution_tstz '1970-01-01 00:00:00+00:00'
-  start_ts '1970-01-01 00:00:00'
+  start_ts NA
   cron_str '*/5 * * * *'
-  model_name 'bronze.seed_data'
-
+  model_name 'peoplewa.bronze.seed_data'
+  this model 'NA'
+Found ExecutionContext created_ts: '2025-06-30 13:33:41.331000+00:00'
 Found execution_ts: '1970-01-01 00:00:00+00:00'
-Guessing this run started on '1970-01-01 00:00:00+00:00'
-The last run before '1970-01-01 00:00:00+00:00' based on cron schedule '*/5 * * * *' was '1969-12-31 23:55:00+00:00'
-Checking if file 'seeds/seed_data.csv' was updated (2025-06-22 11:57:42.994376+00:00) after last run (1969-12-31 23:55:00+00:00): True
-[1/1] bronze__dev.seed_data   [full refresh]   0.18s
+Guessing this run started on '2025-06-30 13:33:41.331000+00:00'.
+The last run before '2025-06-30 13:33:41.331000+00:00' based on cron schedule '*/5 * * * *' was '2025-06-30 13:30:00+00:00'
+Checking if file 'seeds/seed_data.csv' was updated (2025-06-30 13:35:26.078871+00:00) after last run (2025-06-30 13:30:00+00:00): True
+[1/1] bronze__dev.seed_data   [full refresh]   0.37s
 Executing model batches ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100.0% • 1/1 • 0:00:00
 
 ✔ Model batches executed
 
-Updating virtual layer  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100.0% • 1/1 • 0:00:00
-
-✔ Virtual layer updated
+Run finished for environment 'dev'
 ```
 
 ### Debug output from rendering the model
@@ -107,7 +119,8 @@ The SQL statement itself seems to get the date but is missing the time:
 
 ```
 /workspaces/sqlmesh-pythnon-models (main) $ uv run sqlmesh render bronze.seed_data
-SELECT *,
+SELECT
+  *,
   '2025-06-30 00:00:00' AS "execution_ts",
   '2025-06-30 00:00:00+00:00' AS "execution_tstz"
 FROM READ_CSV('seeds/seed_data.csv', "delim" = ',', "header" = TRUE) AS "_q_0"

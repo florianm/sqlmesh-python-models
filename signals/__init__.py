@@ -118,6 +118,7 @@ def ext_file_updated(
         f"  start_ts {kwargs.get('start_ts', 'NA')}\n"
         f"  cron_str '{cron_str}'\n"
         f"  model_name '{model_name}'\n"
+        f"  this model '{kwargs.get('mod', 'NA')}'"
     )
 
     this_run_ec = None

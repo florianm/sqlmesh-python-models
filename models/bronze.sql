@@ -1,7 +1,7 @@
 /* A SQL model to import a CSV to a DuckLake database using the DuckDB engine. */
 
 MODEL (
-  name bronze.seed_data,
+  name peoplewa.bronze.seed_data,
   kind FULL,
   grain "id",
   cron '*/5 * * * *',
@@ -9,10 +9,9 @@ MODEL (
     ext_file_updated(
       file_path := 'seeds/seed_data.csv',
       cron_str := '*/5 * * * *',
-      model_name := 'bronze.seed_data',
-      execution_tstz := @execution_tstz,
-      start_ts := @start_ts
-    )
+      model_name := 'peoplewa.bronze.seed_data',
+      execution_tstz := @execution_tstz
+    ),
   ]
 );
 
