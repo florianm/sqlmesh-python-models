@@ -114,11 +114,10 @@ def ext_file_updated(
     print(
         "Signal 'ext_file_updated' called with\n"
         f"  file_path '{file_path}'\n"
-        f"  execution_tstz {kwargs.get('execution_tstz', 'NA')}\n"
-        f"  start_ts {kwargs.get('start_ts', 'NA')}\n"
+        f"  current time in DDL    {kwargs.get('execution_tstz', 'NA')}\n"
+        f"  current time in signal '{datetime.datetime.now()}'\n"
         f"  cron_str '{cron_str}'\n"
         f"  model_name '{model_name}'\n"
-        f"  this model '{kwargs.get('mod', 'NA')}'"
     )
 
     this_run_ec = None

@@ -10,7 +10,7 @@ MODEL (
       file_path := 'seeds/seed_data.csv',
       cron_str := '*/5 * * * *',
       model_name := 'peoplewa.bronze.seed_data',
-      execution_tstz := @execution_tstz
+      execution_tstz := @my_current_time()
     ),
   ]
 );
